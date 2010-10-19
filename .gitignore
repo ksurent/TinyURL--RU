@@ -4,3 +4,4 @@ inc
 Makefile
 MANIFEST
 META.yml
+*.tar.gz
