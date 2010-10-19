@@ -1,8 +1,8 @@
 0.07 - Tue Oct 19 2010
-	- added QR code support
+    - added QR code support
 
 0.06 - Thu Oct 14 2010
-	- shorten() returns undef on fail
+    - shorten() returns undef on fail
 
 0.05 - Thu Mar 19 2010
     - lengthen() now returns valid UTF-8 string
