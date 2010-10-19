@@ -1,0 +1,121 @@
+NAME
+    TinyURL::RU - shorten URLs with byst.ro (aka tinyurl.ru)
+
+SYNOPSIS
+        use TinyURL::RU qw(shorten lengthen);
+        my $long  = 'http://www.whitehouse.gov/';
+        my $short = shorten($long);
+        $long     = lengthen($short);
+
+DESCRIPTION
+    This module provides you a very simple interface to URL shortening site
+    http://byst.ro (aka http://tinyurl.ru).
+
+    IMPORTANT NOTE:
+
+    byst.ro/tinyurl.ru checks all incoming URLs for blacklisting.
+
+FUNCTIONS
+  $short = shorten($long [, $prefix, $suffix, %options])
+    Takes long URL as first argument and returns its tiny version (or undef
+    on error).
+
+    Optionaly you can pass $prefix and/or $suffix for tiny URL and some
+    other options.
+
+    `$prefix' will be used as subdomain in shortened URL.
+
+    `$suffix' will be used as path in shortened URL.
+
+    Note: passing `$prefix' and/or `$suffix' may cause shortening fail if
+    `$prefix' or `$suffix' is already taken by someone for different URL
+    address.
+
+    There are some prefixes and suffixes which are reserved by byst.ro for
+    its own purposes:
+
+    prefixes: www, bfm
+
+    suffixes: personal
+
+    `%options' are:
+
+    increment
+            Lets you to re-use same (almost) `$suffix' for different URLs.
+
+            Implemented by automatical appending of an incremental number
+            (starts with 1) on repeated requests with the same `$suffix' and
+            different URLs.
+
+            Note: this options works only with `$suffix' passed.
+
+    Simple example:
+
+        $short = shorten($long1, 'hello');          # $short eq 'http://hello.byst.ro/'
+        $short = shorten($long2, 'hello', 'world'); # $short eq 'http://hello.byst.ro/world'
+        $short = shorten($long2, 'hello', 'world'); # $short eq 'http://hello.byst.ro/world' (again)
+
+    Incremental example:
+
+        $short = shorten($long1, undef, 'hello');                # $short eq 'http://byst.ro/hello'
+        $short = shorten($long2, undef, 'hello');                # short is undefined because 'hello' suffix already exists for $long1
+        $short = shorten($long2, undef, 'hello', increment => 1) # $short eq 'http://byst.ro/hello1'
+        $short = shorten($long3, undef, 'hello', increment => 1) # $short eq 'http://byst.ro/hello2'
+
+  $long = lengthen($short)
+    Takes shortened URL (or its path part) as argument and returns its
+    original version (or undef on error).
+
+    Returned value is a valid UTF-8 string with URL within it.
+
+  $qrcode = shorten_with_qrcode($long [, $prefix, $suffix, %options])
+  ($qrcode, $short) = shorten_with_qrcode($long [, $prefix, $suffix, %options])
+    Does almost the same as shorten() and takes the same arguments.
+
+    In scalar context return value is a link to an image that has shortened
+    URL encoded in it. In list context returned is a list of the link to an
+    image and shortened URL.
+
+    The image is a QR code which is readable by plenty of devices, e.g.
+    mobile phones with camera.
+
+    Usage example:
+
+        $w = $h = $TinyURL::RU::QRCODE_SIZE;
+        $qrcode = shorten_with_qrcode($long4);
+
+    Later, in your templates:
+
+        <img src="<% $qrcode %>" width="<% $w %>" height="<% $h %>"/>
+
+VARIABLES
+  $QRCODE_SIZE
+    Sets the size of the QR code image. The image will be a square of
+    $QRCODE_SIZE px.
+
+    The size must be between 100 and 1000 or it will be ignored.
+
+    Default value is 300.
+
+AUTHOR
+    Алексей Суриков <ksuri@cpan.org>
+
+NOTE
+    There is a small convenience for you: a plugin for WWW::Shorten comes
+    with this distribution.
+
+    See WWW::Shorten::TinyURL::RU.
+
+SEE ALSO
+    WWW::Shorten::TinyURL::RU
+
+    http://byst.ro/
+
+    http://tinyurl.ru/
+
+    http://en.wikipedia.org/wiki/QR_Code
+
+LICENSE
+    This program is free software, you can redistribute it under the same
+    terms as Perl itself.
+
